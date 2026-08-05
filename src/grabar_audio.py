@@ -170,7 +170,23 @@ def reproducir_y_grabar(
     # sounddevice espera shape (n, channels) para playrec.
     playback_2d = playback.reshape(-1, 1)
 
+    # En sounddevice >=0.5 el Stream solo acepta `device`, no
+    # input_device/output_device. Un par (in, out) abre dúplex entre
+    # dispositivos distintos (ej. Behringer mic + VoiceMeeter out).
+    idx_in = (
+        dispositivo_entrada
+        if dispositivo_entrada is not None
+        else sd.default.device[0]
+    )
+    idx_out = (
+        dispositivo_salida
+        if dispositivo_salida is not None
+        else sd.default.device[1]
+    )
+    device = (idx_in, idx_out)
+
     print("Playing sweep and recording microphone simultaneously...")
+    print(f"  Devices: input={idx_in}, output={idx_out}")
     print("  (Keep the volume moderate to avoid clipping / feedback)")
 
     try:
@@ -179,8 +195,7 @@ def reproducir_y_grabar(
             samplerate=fs,
             channels=1,
             dtype="float64",
-            input_device=dispositivo_entrada,
-            output_device=dispositivo_salida,
+            device=device,
         )
         sd.wait()  # Bloquea hasta que termine el stream dúplex.
     except sd.PortAudioError as exc:

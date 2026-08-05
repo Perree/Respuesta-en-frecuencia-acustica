@@ -52,10 +52,10 @@ def main() -> None:
     amplitud = 0.5
 
     # --- Dispositivos de audio (Fase 2) ---
-    # None = default de Windows / PortAudio.
-    dispositivo_entrada = None  # micrófono
-    dispositivo_salida = None   # parlantes / auriculares
-    cola_s = 1.5                # silencio extra al final para capturar la sala
+    # Índices MME según `sounddevice.query_devices()` en esta máquina.
+    dispositivo_entrada = 1  # Línea de entrada (BEHRINGER)
+    dispositivo_salida = 6   # VoiceMeeter Aux Input → ruteá a parlantes en VoiceMeeter
+    cola_s = 1.5             # silencio extra al final para capturar la sala
 
     # True  → carga resultados/grabacion.wav (iterar sin regrabar).
     # False → reproduce el sweep y graba el mic de nuevo.
